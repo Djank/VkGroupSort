@@ -1,29 +1,35 @@
 /**
  * Created by evgeny on 01.09.14.
  */
-var http = require('http');
+var request = require('request');
 
-var params = 'wall.get?'
-    + 'v=5.24'
-    + '&owner_id=-34049481'
-    + '&count=1';
+var callVk = function (method, params, callback) {
+    var options = {
+        url: 'http://api.vk.com/method/' + method,
+        json: true,
+        qs: params
+    };
 
-var options = {
-    host: 'api.vk.com',
-    port: 80,
-    path: '/method/' + params
+    request(options,
+        function (error, response, body) {
+            if (!error && response.statusCode == 200) {
+                callback(null, body);
+            }
+            else {
+                callback(error, response);
+            }
+        }
+    );
 };
-http.get(options, function(res){
-    var data = String();
-    res.setEncoding('utf8');
-    res.on('data', function (chunk) {
-        data += chunk;
-    });
-    res.on('end', function () {
-        var o = JSON.parse(data);
-        console.dir(o);
-        console.log(JSON.stringify(o, undefined, ' '));
-    });
-}).on('error', function(res){
-    console.log('EGGOOGGGG!!!' + res);
+
+var params = {
+    v: '5.24',
+    owner_id: '-34049481',
+    count: 10
+};
+
+callVk('wall.get', params, function (err, body) {
+    if (!err) {
+        console.log(body.response.items);
+    }
 });
