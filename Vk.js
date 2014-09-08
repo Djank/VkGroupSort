@@ -3,17 +3,8 @@
  */
 var request = require('request');
 
-var vk = function(){
-};
-
-var getLastRecords = function (numberToDownloads) {
-    var currentOffset = 0;
-    var records = [];
-    // TODO: Цикл загрузки записей со стены
-    records += getRecords(currentOffset, Math.min(100, numberToDownloads));
-};
-
-var callVk = function (method, params, callback) {
+var requestVk = function (method, params, callback) {
+    params.v = '5.24';
     var options = {
         url: 'http://api.vk.com/method/' + method,
         json: true,
@@ -32,4 +23,26 @@ var callVk = function (method, params, callback) {
     );
 };
 
-module.export = vk;
+var Vk = function () {
+};
+
+Vk.prototype.countOfPosts = function (ownerId) {
+    var params = {
+        owner_id: ownerId,
+        count: 0
+    };
+    requestVk('wall.get', params, function (err, posts) {
+        if (err)
+            throw err;
+        return posts.count;
+    });
+};
+
+Vk.prototype.getPosts = function (count) {
+    var currentOffset = 0;
+    var records = [];
+    // TODO: Цикл загрузки записей со стены
+    records += getRecords(currentOffset, Math.min(100, numberToDownloads));
+};
+
+module.export = Vk;
