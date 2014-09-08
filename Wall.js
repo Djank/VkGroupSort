@@ -2,42 +2,19 @@
  * Created by evgeny on 01.09.14.
  */
 var request = require('request');
-var storage = require('./Storage.js');
-var vk = require('./Vk.js');
-
-var callVk = function (method, params, callback) {
-    var options = {
-        url: 'http://api.vk.com/method/' + method,
-        json: true,
-        qs: params
-    };
-
-    request(options,
-        function (error, response, body) {
-            if (!error && response.statusCode == 200) {
-                callback(null, body);
-            }
-            else {
-                callback(error, response);
-            }
-        }
-    );
-};
-
-var getLastRecords = function (numberToDownloads) {
-    var currentOffset = 0;
-    var records = [];
-    // TODO: Цикл загрузки записей со стены
-    records += getRecords(currentOffset, Math.min(100, numberToDownloads));
-};
+var Storage = require('./Storage.js');
+var Vk = require('./Vk.js');
 
 var owner = {
     id: -1
 };
 var conString = "postgres://postgres:3611umn@localhost/vkontakte";
+var storage = new Storage(conString);
+var vk = new Vk();
 
-var countInVK = countOfRecords(owner.id); // get count of records from VK
-var countInStorage = countInStorage(dbConnetion, owner.id);
+var countInVK = vk.countOfPosts(owner.id); // get count of records from VK
+var countInStorage = storage.countOfPosts(dbConnetion, owner.id);
+
 var numberToDownloads = countInVK - countInStorage + 1;
 /*вычисляем кол-во записей для скачивания*/
 if (numberToDownloads < 0) // кол-во записей меньше 0, это странно, сделаем 3.
