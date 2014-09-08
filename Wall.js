@@ -2,6 +2,8 @@
  * Created by evgeny on 01.09.14.
  */
 var request = require('request');
+var storage = require('./Storage.js');
+var vk = require('./Vk.js');
 
 var callVk = function (method, params, callback) {
     var options = {
