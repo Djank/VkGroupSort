@@ -32,6 +32,7 @@ var getLastRecords = function (numberToDownloads) {
 var owner = {
     id: -1
 };
+var conString = "postgres://postgres:3611umn@localhost/vkontakte";
 
 var countInVK = countOfRecords(owner.id); // get count of records from VK
 var countInStorage = countInStorage(dbConnetion, owner.id);
