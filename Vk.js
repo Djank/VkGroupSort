@@ -14,7 +14,7 @@ var requestVk = function (method, params, callback) {
     request(options,
         function (error, response, body) {
             if (!error && response.statusCode == 200) {
-                callback(null, body);
+                callback(null, body.response);
             }
             else {
                 callback(error, response);
@@ -26,15 +26,13 @@ var requestVk = function (method, params, callback) {
 var Vk = function () {
 };
 
-Vk.prototype.countOfPosts = function (ownerId) {
+Vk.prototype.countOfPosts = function (ownerId, callback) {
     var params = {
         owner_id: ownerId,
-        count: 0
+        count: 1
     };
     requestVk('wall.get', params, function (err, posts) {
-        if (err)
-            throw err;
-        return posts.count;
+        callback(err, err ? posts : posts.count);
     });
 };
 
@@ -45,4 +43,4 @@ Vk.prototype.getPosts = function (count) {
     records += getRecords(currentOffset, Math.min(100, numberToDownloads));
 };
 
-module.export = Vk;
+module.exports = Vk;
