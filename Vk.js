@@ -39,7 +39,7 @@ Vk.prototype.countOfPosts = function (ownerId, callback) {
 Vk.prototype.getPosts = function (ownerid, postCount, callback) {
     var result = [];
     var errors = [];
-
+    var countOfRequest = 0;
     function posts(offset, count, isLast) {
         var params = {
             owner_id: ownerid,
@@ -60,7 +60,8 @@ Vk.prototype.getPosts = function (ownerid, postCount, callback) {
                 result.push(v)
             });
 
-            if (isLast)
+            countOfRequest += count;
+            if (countOfRequest >= postCount)
                 callback(errors, result);
         });
     };
@@ -78,7 +79,7 @@ Vk.prototype.getPosts = function (ownerid, postCount, callback) {
         if (offset >= postCount)
             clearInterval(timer);
     };
-    var delay = 500;
+    var delay = 400;
     // Запустим интервал на выполнение.
     var timer = setInterval(getNextChunkOfPosts, delay);
 };
