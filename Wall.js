@@ -13,14 +13,22 @@ var conString = "postgres://postgres:3611umn@localhost/vkontakte";
 var vk = new Vk();
 
 // get count of records from VK
-vk.countOfPosts(owner.id, function (err, count) {
-    if (err) {
-        console.log('Error: ' + err);
+/*vk.countOfPosts(owner.id, function (err, count) {
+ if (err) {
+ console.log('Error: ' + err);
         return;
     }
     console.log('Count of posts in vk: ' + count);
-});
+ });*/
 
+vk.getPosts(owner.id, 346, function (errors, posts) {
+    console.log('Errors count: ' + errors.length);
+    console.log('posts count: ' + posts.length)
+    var sumOfLikes = posts.reduce(function (prev, p) {
+        return prev + p.likes.count;
+    }, 0);
+    console.log('sum of likes: ' + sumOfLikes);
+});
 
 /*var countInStorage = storage.countOfPosts(owner.id);
 
