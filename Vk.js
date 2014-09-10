@@ -37,8 +37,6 @@ Vk.prototype.countOfPosts = function (ownerId, callback) {
 };
 
 Vk.prototype.getPosts = function (ownerid, postCount, callback) {
-    var result = [];
-    var errors = [];
     var countOfRequest = 0;
     function posts(offset, count, isLast) {
         var params = {
@@ -47,22 +45,24 @@ Vk.prototype.getPosts = function (ownerid, postCount, callback) {
             offset: offset
         };
         requestVk('wall.get', params, function (err, posts) {
+            countOfRequest += count;
             if (err) {
-                errors.push({
+                callback({
                     error: err,
-                    response: posts
+                    response: posts,
+                    offset: offset,
+                    count: count,
+                    isLastChunk: countOfRequest >= postCount
                 });
             }
-            console.log('get ' + posts.items.length + ' posts. ' +
-                'Off: +' + offset + ' Count:' + count);
-            // Получили посты, запишем их в результат
-            posts.items.forEach(function (v) {
-                result.push(v)
-            });
-
-            countOfRequest += count;
-            if (countOfRequest >= postCount)
-                callback(errors, result);
+            else {
+                callback({
+                    posts: posts.items,
+                    offset: offset,
+                    count: count,
+                    isLastChunk: countOfRequest >= postCount
+                });
+            }
         });
     };
 

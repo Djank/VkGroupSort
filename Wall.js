@@ -21,18 +21,27 @@ vk.countOfPosts(owner.id, function (err, count) {
     console.log('Count of posts in vk: ' + count);
 });
 
-vk.getPosts(owner.id, 42, function (errors, posts) {
-    console.log('Errors count: ' + errors.length);
-    console.log('posts count: ' + posts.length)
-    var sumOfLikes = posts.reduce(function (prev, p) {
-        return prev + p.likes.count;
-    }, 0);
-    console.log('sum of likes: ' + sumOfLikes);
+var posts = [];
+vk.getPosts(owner.id, 42, function (info) {
+    if (info.posts) {
+        // Получили посты, запишем их в результат
+        info.posts.forEach(function (v) {
+            posts.push(v)
+        });
+        console.log('get ' + info.posts.length + ' posts. ' +
+            'Off: +' + info.offset + ' Count:' + info.count);
+    }
+    else {
+        // получили ошибку при приёме.
+        console.error(info.error);
+    }
 
-    storage.savePosts(posts, function done() {
-        console.log('save in db done!');
-        storage.end();
-    });
+    if (info.isLastChunk) {
+        storage.savePosts(posts, function done() {
+            console.log('save in db done!');
+            storage.end();
+        });
+    }
 });
 
 /*var countInStorage = storage.countOfPosts(owner.id);
